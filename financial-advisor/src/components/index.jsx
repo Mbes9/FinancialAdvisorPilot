@@ -5,6 +5,8 @@ import {
   Route,
   Switch
 } from "react-router-dom";
+import withRiskSelector from "../core/withRiskSelector";
+import RiskCalculator from "./RiskCalculator/RiskCalculator";
 import RiskSelector from "./RiskSelector/RiskSelector";
 
 class Index extends React.Component {
@@ -17,8 +19,16 @@ class Index extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/" component={RiskSelector} exact={true} />
-          <Route path="/calculator/" component={RiskSelector} exact={true} />
+          <Route
+            path="/"
+            component={withRiskSelector(RiskSelector)}
+            exact={true}
+          />
+          <Route
+            path="/calculator/"
+            component={withRiskSelector(RiskCalculator)}
+            exact={true}
+          />
           <Redirect to="/" />
         </Switch>
       </Router>
