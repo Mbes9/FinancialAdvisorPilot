@@ -1,43 +1,19 @@
 import React from "react";
 import {
-  Button,
   Card,
-  Header,
+  Grid,
+  Icon,
+  Message,
   Progress,
-  Divider,
-  Segment,
-  Grid
+  Segment
 } from "semantic-ui-react";
 import RiskTable from "../RiskSelector/RiskTable";
 import RiskForm from "./RiskForm";
 import RiskResults from "./RiskResults";
 
 class RiskCalculator extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentData: {
-        bonds: "",
-        largeCap: "",
-        midCap: "",
-        foreign: "",
-        smallCap: ""
-      }
-    };
-  }
-
-  handleChange = (e, { name, value }) => {
-    this.setState(prevState => ({
-      currentData: {
-        ...prevState.currentData,
-        [name]: value
-      }
-    }));
-  };
-
   render() {
-    const { risksData, activeRisk } = this.props;
-    const { currentData, results } = this.state;
+    const { risksData, activeRisk, someError } = this.props;
 
     const item = risksData[activeRisk - 1];
     return (
@@ -57,25 +33,34 @@ class RiskCalculator extends React.Component {
           </Card.Description>
         </Card.Content>
         <Card.Content style={{ display: "block", overflowY: "auto" }}>
-          <Grid columns="2" divided>
-            <Grid.Row>
-              <Grid.Column>
-                <RiskForm
-                  currentData={currentData}
-                  handleChange={this.handleChange}
-                  inputs={[
-                    { name: "bonds", text: "Bonds" },
-                    { name: "largeCap", text: "Large Cap" },
-                    { name: "midCap", text: "Mid Cap" },
-                    { name: "foreign", text: "Foreign" },
-                    { name: "smallCap", text: "Small Cap" }
-                  ]}
-                />
-              </Grid.Column>
-              <Grid.Column>
-                <RiskResults results={results} />
-              </Grid.Column>
-            </Grid.Row>
+          <Grid columns="equal" divided stackable>
+            <Grid.Column mobile={16} tablet={16} computer={8}>
+              <RiskForm
+                inputs={[
+                  { name: "bonds", text: "Bonds" },
+                  { name: "largeCap", text: "Large Cap" },
+                  { name: "midCap", text: "Mid Cap" },
+                  { name: "foreign", text: "Foreign" },
+                  { name: "smallCap", text: "Small Cap" }
+                ]}
+                {...this.props}
+              />
+            </Grid.Column>
+            <Grid.Column mobile={16} tablet={16} computer={8}>
+              <Segment attached placeholder style={{ height: "90%" }}>
+                <RiskResults {...this.props} />
+              </Segment>
+
+              {someError && (
+                <Segment attached="bottom">
+                  <Message attached="bottom" negative>
+                    <Icon name="warning" />
+                    Please use only positive digits or zero when entering
+                    current amounts. Please enter all inputs correctly.
+                  </Message>
+                </Segment>
+              )}
+            </Grid.Column>
           </Grid>
         </Card.Content>
       </React.Fragment>

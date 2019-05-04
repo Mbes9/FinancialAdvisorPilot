@@ -1,10 +1,17 @@
 import React from "react";
-import { Header, Icon } from "semantic-ui-react";
+import { Button, Header, Icon } from "semantic-ui-react";
 
-const HeaderAdviser = () => (
+const HeaderAdviser = ({ handleBack }) => (
   <div>
+    <Button
+      floated="left"
+      basic
+      icon="arrow left"
+      onClick={handleBack}
+      style={{ width: "7%" }}
+    />
     <Header as="h2" icon textAlign="center">
-      <Icon name="info" circular style={{ marginTop: "1%" }} />
+      <Icon name="info" circular />
       <Header.Content>Financial Advisor</Header.Content>
     </Header>
   </div>

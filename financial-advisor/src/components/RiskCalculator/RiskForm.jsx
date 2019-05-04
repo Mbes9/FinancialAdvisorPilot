@@ -1,7 +1,15 @@
 import React from "react";
-import { Form, Input, Table, Header, Button, Icon } from "semantic-ui-react";
+import { Button, Header, Icon, Input, Table } from "semantic-ui-react";
 
-const RiskForm = ({ handleChange, currentData, inputs }) => (
+const RiskForm = ({
+  handleChange,
+  currentPortfolio,
+  differences = [],
+  newAmount = [],
+  inputs,
+  handleCalculate,
+  formErrors
+}) => (
   <Table basic="very" celled collapsing>
     <Table.Header>
       <Table.Row>
@@ -24,21 +32,44 @@ const RiskForm = ({ handleChange, currentData, inputs }) => (
               placeholder="$$$$"
               onChange={handleChange}
               name={i.name}
-              value={currentData[i.name]}
+              value={currentPortfolio[i.name]}
+              error={formErrors[i.name]}
             />
           </Table.Cell>
           <Table.Cell>
-            <Input />
+            <Input
+              value={!isNaN(differences[index]) ? differences[index] : ""}
+              disabled
+              style={{ opacity: 1 }}
+              input={{
+                style: {
+                  color:
+                    !isNaN(differences[index]) && differences[index] < 0
+                      ? "red"
+                      : "green"
+                }
+              }}
+            />
           </Table.Cell>
           <Table.Cell>
-            <Input />
+            <Input
+              value={!isNaN(newAmount[index]) ? newAmount[index] : ""}
+              disabled
+              style={{ opacity: 1 }}
+            />
           </Table.Cell>
         </Table.Row>
       ))}
       <Table.Row>
         <Table.Cell colSpan="4">
-          <Button icon labelPosition="right" fluid color='blue'>
-            Rebalance
+          <Button
+            icon
+            labelPosition="right"
+            fluid
+            color="blue"
+            onClick={handleCalculate}
+          >
+            {"Rebalance"}
             <Icon name="right arrow" />
           </Button>
         </Table.Cell>

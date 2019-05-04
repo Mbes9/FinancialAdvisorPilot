@@ -1,8 +1,8 @@
 import React from "react";
 import { Header, Table } from "semantic-ui-react";
 
-const RiskTable = ({ items = [], activeValue = 1 }) => (
-  <Table celled unstackable>
+const RiskTable = ({ items = [], activeValue = 1, handleRiskSelected }) => (
+  <Table celled selectable unstackable>
     <Table.Header>
       <Table.Row textAlign="center">
         <Table.HeaderCell singleLine>Risk</Table.HeaderCell>
@@ -18,7 +18,9 @@ const RiskTable = ({ items = [], activeValue = 1 }) => (
         <Table.Row
           key={index}
           textAlign="center"
-          positive={item.risk === activeValue}
+          active={item.risk === activeValue}
+          onClick={handleRiskSelected && handleRiskSelected(item.risk)}
+          style={{ cursor: "pointer" }}
         >
           <Table.Cell>
             <Header as="h3" textAlign="center">

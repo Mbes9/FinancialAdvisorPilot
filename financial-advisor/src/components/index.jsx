@@ -8,6 +8,26 @@ import {
 import withRiskSelector from "../core/withRiskSelector";
 import RiskCalculator from "./RiskCalculator/RiskCalculator";
 import RiskSelector from "./RiskSelector/RiskSelector";
+import withPortfolio from "../core/withPortfolio";
+import { connect } from "react-redux";
+
+const PrivateRoute = ({ component: Component, risksData, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => {
+      return risksData ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: "/",
+            state: { from: props.location }
+          }}
+        />
+      );
+    }}
+  />
+);
 
 class Index extends React.Component {
   constructor(props) {
@@ -16,18 +36,20 @@ class Index extends React.Component {
   }
 
   render() {
+    const { setNavigation } = this.props;
     return (
-      <Router>
+      <Router ref={e => setNavigation(e)}>
         <Switch>
           <Route
             path="/"
             component={withRiskSelector(RiskSelector)}
             exact={true}
           />
-          <Route
+          <PrivateRoute
             path="/calculator/"
-            component={withRiskSelector(RiskCalculator)}
+            component={withPortfolio(RiskCalculator)}
             exact={true}
+            {...this.props}
           />
           <Redirect to="/" />
         </Switch>
@@ -36,4 +58,8 @@ class Index extends React.Component {
   }
 }
 
-export default Index;
+const mapStateToProps = ({ risk }) => ({
+  risksData: risk.risksData
+});
+
+export default connect(mapStateToProps)(Index);

@@ -1,7 +1,6 @@
 export const RECEIVE_RISK = "RECEIVE_RISK";
 export const RECEIVE_RISK_DATA = "RECEIVE_RISK_DATA";
 export const REQUEST_RISK_DATA = "REQUEST_RISK_DATA";
-export const UPDATE_RISK_PORTFOLIO = "UPDATE_RISK_PORTFOLIO";
 export const UPDATE_RISK = "UPDATE_RISK";
 
 export const receiveRisk = risk => ({
@@ -16,11 +15,6 @@ export const receiveRiskData = risksData => ({
 
 export const requestRiskData = () => ({
   type: REQUEST_RISK_DATA
-});
-
-export const updateRiskPortfolio = riskPortfolio => ({
-  type: UPDATE_RISK_PORTFOLIO,
-  riskPortfolio
 });
 
 export const updateRisk = activeRisk => ({

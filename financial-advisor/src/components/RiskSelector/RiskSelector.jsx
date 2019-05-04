@@ -76,8 +76,16 @@ class RiskSelector extends React.Component {
           </Card.Description>
         </Card.Content>
         <Card.Content style={{ display: "block", overflowY: "auto" }}>
-          {!showChart && <RiskTable items={risksData} activeValue={activeRisk} />}
-          {showChart && <RiskChart item={risksData[activeRisk - 1]} />}
+          {!showChart && (
+            <RiskTable
+              items={risksData}
+              activeValue={activeRisk}
+              {...this.props}
+            />
+          )}
+          {showChart && (
+            <RiskChart item={risksData[activeRisk - 1]} {...this.props} />
+          )}
         </Card.Content>
       </React.Fragment>
     );

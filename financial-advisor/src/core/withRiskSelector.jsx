@@ -5,10 +5,6 @@ import { requestRiskData, updateRisk } from "../actions/risk_actions";
 
 const withRiskSelector = Component =>
   class extends React.Component {
-    constructor(props) {
-      super(props);
-    }
-
     handleRiskSelected = risk => () => {
       const { updateRisk } = this.props;
       updateRisk(risk);

@@ -1,9 +1,8 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
-import { logger } from "redux-logger";
 import createSagaMiddleware from "redux-saga";
-import { Card, Icon } from "semantic-ui-react";
+import { Card, Icon, Segment } from "semantic-ui-react";
 import "./App.css";
 import Index from "./components";
 import HeaderAdviser from "./components/HeaderAdviser";
@@ -12,29 +11,34 @@ import rootSaga from "./sagas/saga";
 
 const sagaMiddleware = createSagaMiddleware();
 
-const store = createStore(reducer, applyMiddleware(sagaMiddleware, logger));
+const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(rootSaga);
 
-const App = () => {
-  return (
-    <Provider store={store}>
-      <header className="App">
-        <Card
-          style={{ margin: "5%", marginTop: "2%", marginBottom: "2%" }}
-          fluid
-        >
-          <HeaderAdviser />
-          <Index />
-          <Card.Content extra>
-            <a href="https://github.com/Mbes9/FinancialAdvisorPilot">
-              <Icon name="user" />
-              {`Test by Matias Besozzi - ${"https://github.com/Mbes9/FinancialAdvisorPilot"}`}
-            </a>
-          </Card.Content>
-        </Card>
-      </header>
-    </Provider>
-  );
-};
+export default class App extends React.Component {
+  setNavigation = navigation => {
+    this.navigation = navigation;
+  };
 
-export default App;
+  render() {
+    return (
+      <Provider store={store}>
+        <header className="App">
+          <Segment padded style={{ width: "100%" }}>
+            <Card fluid>
+              <HeaderAdviser
+                handleBack={() => this.navigation.history.goBack()}
+              />
+              <Index setNavigation={this.setNavigation} />
+              <Card.Content extra>
+                <a href="https://github.com/Mbes9/FinancialAdvisorPilot">
+                  <Icon name="user" />
+                  {`Test by Matias Besozzi - ${"https://github.com/Mbes9/FinancialAdvisorPilot"}`}
+                </a>
+              </Card.Content>
+            </Card>
+          </Segment>
+        </header>
+      </Provider>
+    );
+  }
+}
