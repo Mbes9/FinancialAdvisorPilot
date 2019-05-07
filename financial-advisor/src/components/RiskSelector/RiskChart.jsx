@@ -26,7 +26,7 @@ const RiskChart = ({ item = {} }) => {
   const values = keys.slice(1).map(key => {
     return { value: item[key], keyName: key, name: key };
   });
-  console.log("values: ", values);
+
   return (
     <PieChart
       width={window.innerWidth - window.innerWidth * 0.6}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, Header, Progress } from "semantic-ui-react";
+import { Button, Card, Header, Progress, Container } from "semantic-ui-react";
 import RiskButtonGroup from "./RiskButtonGroup";
 import RiskChart from "./RiskChart";
 import RiskTable from "./RiskTable";
@@ -23,7 +23,7 @@ class RiskSelector extends React.Component {
     return (
       <React.Fragment>
         <Card.Content style={{ flexGrow: 0 }}>
-          <Card.Header>
+          <Card.Header textAlign="center">
             Please Select A Risk Level For Your Investment Portfolio
           </Card.Header>
           <Card.Description>
@@ -42,40 +42,42 @@ class RiskSelector extends React.Component {
                 High
               </Header>
             </Progress>
-            <RiskButtonGroup
-              values={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-              activeValue={activeRisk}
-              handleRiskSelected={handleRiskSelected}
-              handleContinue={handleContinue}
-              {...this.props}
-            />
+            <Container textAlign="center" fluid>
+              <RiskButtonGroup
+                values={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                activeValue={activeRisk}
+                handleRiskSelected={handleRiskSelected}
+                handleContinue={handleContinue}
+                {...this.props}
+              />
 
-            <Button.Group floated="right">
-              <Button
-                icon="table"
-                color="grey"
-                content="Table"
-                onClick={() =>
-                  this.setState(() => ({
-                    showChart: false
-                  }))
-                }
-              />
-              <Button.Or />
-              <Button
-                icon="pie graph"
-                color="blue"
-                content="Graphic"
-                onClick={() =>
-                  this.setState(() => ({
-                    showChart: true
-                  }))
-                }
-              />
-            </Button.Group>
+              <Button.Group floated="right">
+                <Button
+                  icon="table"
+                  color="grey"
+                  content="Table"
+                  onClick={() =>
+                    this.setState(() => ({
+                      showChart: false
+                    }))
+                  }
+                />
+                <Button.Or />
+                <Button
+                  icon="pie graph"
+                  color="blue"
+                  content="Graphic"
+                  onClick={() =>
+                    this.setState(() => ({
+                      showChart: true
+                    }))
+                  }
+                />
+              </Button.Group>
+            </Container>
           </Card.Description>
         </Card.Content>
-        <Card.Content style={{ display: "block", overflowY: "auto" }}>
+        <Card.Content style={{ display: "block", overflowY: "auto" }} textAlign='center'>
           {!showChart && (
             <RiskTable
               items={risksData}

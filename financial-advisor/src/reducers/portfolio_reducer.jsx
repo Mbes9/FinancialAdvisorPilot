@@ -21,7 +21,6 @@ const portfolioReducer = (
     case RECEIVE_PORTFOLIO:
       return { ...state };
     case UPDATE_PORTFOLIO:
-      console.log("action: ", action);
       return { ...state, portfolio: action.portfolio };
     default:
       return state;

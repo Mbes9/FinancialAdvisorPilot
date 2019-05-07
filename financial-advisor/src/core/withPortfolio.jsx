@@ -31,16 +31,12 @@ const withPortfolio = Component =>
       const errors = this.validateForm();
       this.setState({ formErrors: errors });
       if (!Object.keys(errors).some(x => errors[x])) {
-        this.setState({ someError: false });
         const { updatePortfolio } = this.props;
         updatePortfolio(currentPortfolio);
         const newAmount = this.handleNewAmount();
-        console.log("newAmount: ", newAmount);
         const differences = this.handleDifference(newAmount);
-        console.log("differences: ", differences);
-        const transference = this.handleTransference(differences);
-        console.log("transference: ", transference);
-        this.setState({ differences, newAmount });
+        const transfers = this.handleTransference(differences);
+        this.setState({ differences, newAmount, transfers, someError: false });
       } else this.setState({ someError: true });
     };
 
@@ -80,65 +76,107 @@ const withPortfolio = Component =>
     };
 
     handleTransference = differences => {
-      let transference = [];
-      let newDifferences = differences.slice(0);
-      function sortNumber(a, b) {
-        return a - b;
+      let differencesUpdated = [...differences];
+      let transfers = [];
+      let done = false;
+
+      while (!done) {
+        let {
+          transfers: smallerTransfers,
+          differences: newDifferences,
+          transferred
+        } = this._transferSmallerFirst(differencesUpdated, transfers);
+        if (transferred) {
+          differencesUpdated = newDifferences;
+          transfers = smallerTransfers;
+        } else {
+          let {
+            transfers: biggerTransfers,
+            differences: newDifferences
+          } = this._transferBiggerFirst(differencesUpdated, transfers);
+          differencesUpdated = newDifferences;
+          transfers = biggerTransfers;
+        }
+
+        differencesUpdated = differencesUpdated.map(dif => {
+          return Math.round(100 * dif) / 100;
+        });
+        done = differencesUpdated.filter(dif => dif === 0).length > 3;
       }
-      let sortedDiff = differences.sort(sortNumber);
+      return transfers;
+    };
 
-      let transferMade = false;
-      let smallestFittingDeficit = null;
+    _transferSmallerFirst = (differences, transfers) => {
+      let differencesUpdated = [...differences];
+      let transfersUpdated = [...transfers];
+      let transferred = false;
 
-      sortedDiff
-        .slice(0)
-        .reverse()
-        .forEach(function(surplus) {
-          if (!transferMade && surplus > 0) {
-            sortedDiff.forEach(function(deficit) {
-              if (surplus + deficit <= 0) {
-                smallestFittingDeficit = deficit;
+      let sortedDifferences = differences.sort((a, b) => a - b);
+
+      sortedDifferences.forEach(excess => {
+        if (excess > 0)
+          sortedDifferences
+            .slice(0)
+            .reverse()
+            .forEach(deficit => {
+              if (!transferred && deficit < 0) {
+                let excessIndex = differencesUpdated.indexOf(excess);
+                let deficitIndex = differencesUpdated.indexOf(deficit);
+                differencesUpdated[excessIndex] = excess + deficit;
+                differencesUpdated[deficitIndex] = 0;
+                transfersUpdated.push({
+                  from: deficitIndex,
+                  to: excessIndex,
+                  amount: Math.round(100 * (excess - (excess + deficit))) / 100
+                });
+                transferred = true;
               }
             });
+      });
+      return {
+        transfers: transfersUpdated,
+        differences: differencesUpdated,
+        transferred
+      };
+    };
 
-            if (smallestFittingDeficit) {
-              let surplusIdx = newDifferences.indexOf(surplus);
-              let deficitIdx = newDifferences.indexOf(smallestFittingDeficit);
-              newDifferences[surplusIdx] = 0;
-              newDifferences[deficitIdx] = surplus + smallestFittingDeficit;
-              let transferAmount = Math.round(100 * surplus) / 100;
-              //  let transferString = `<div>• Transfer $${transferAmount} from ${labels[deficitIdx]} to ${labels[surplusIdx]}.</div>`
-              //  $('.risk-calculator-transfers')[0].innerHTML += transferString;
-              transference.push({
-                from: deficitIdx,
-                to: surplusIdx,
-                amount: transferAmount
+    _transferBiggerFirst = (differences, transfers) => {
+      let differencesUpdated = [...differences];
+      let transfersUpdated = [...transfers];
+      let transferred = false;
+      let minDeficit = undefined;
+
+      let sortedDifferences = differences.sort((a, b) => a - b);
+
+      sortedDifferences
+        .slice(0)
+        .reverse()
+        .forEach(excess => {
+          if (!transferred && excess > 0) {
+            sortedDifferences.forEach(deficit => {
+              if (excess + deficit <= 0) minDeficit = deficit;
+            });
+            if (minDeficit) {
+              let excessIndex = differencesUpdated.indexOf(excess);
+              let deficitIndex = differencesUpdated.indexOf(minDeficit);
+
+              differencesUpdated[excessIndex] = 0;
+
+              differencesUpdated[deficitIndex] = excess + minDeficit;
+              transfersUpdated.push({
+                from: deficitIndex,
+                to: excessIndex,
+                amount: Math.round(100 * excess) / 100
               });
-              transferMade = true;
+              transferred = true;
             }
           }
         });
-        if(!transferMade){
-          sortedDiff.forEach(function(smallestSurplus){
-            if(smallestSurplus > 0){
-              sortedDiff.slice(0).reverse().forEach(function(smallestDeficit){
-                if(!transferMade && smallestDeficit < 0){
-                  let surplusIdx = newDifferences.indexOf(smallestSurplus);
-                  let deficitIdx = newDifferences.indexOf(smallestDeficit);
-                  newDifferences[surplusIdx] = smallestSurplus + smallestDeficit;
-                  newDifferences[deficitIdx] = 0;
-                  let transferAmount = Math.round(100*(smallestSurplus - (smallestSurplus + smallestDeficit)))/100;
-                  // let transferString = `<div>• Transfer $${transferAmount} from ${labels[deficitIdx]} to ${labels[surplusIdx]}.</div>`
-                  // $('.risk-calculator-transfers')[0].innerHTML += transferString;
-                  transference.push({"from": deficitIdx, "to":surplusIdx, "amount": transferAmount});
-                  transferMade = true;
-                }
-              })
-            }
-          })
-        }
-       
-      return transference;
+      return {
+        transfers: transfersUpdated,
+        differences: differencesUpdated,
+        transferred
+      };
     };
 
     render() {
@@ -146,6 +184,7 @@ const withPortfolio = Component =>
         currentPortfolio,
         differences,
         newAmount,
+        transfers,
         formErrors,
         someError
       } = this.state;
@@ -157,6 +196,7 @@ const withPortfolio = Component =>
           currentPortfolio={currentPortfolio}
           differences={differences}
           newAmount={newAmount}
+          transfers={transfers}
           formErrors={formErrors}
           someError={someError}
         />

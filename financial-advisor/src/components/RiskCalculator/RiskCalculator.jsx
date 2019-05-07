@@ -16,10 +16,12 @@ class RiskCalculator extends React.Component {
     const { risksData, activeRisk, someError } = this.props;
 
     const item = risksData[activeRisk - 1];
+    const keys = Object.keys(item).slice(1);
+
     return (
       <React.Fragment>
         <Card.Content style={{ flexGrow: 0 }}>
-          <Card.Header>Personalized Portfolio</Card.Header>
+          <Card.Header textAlign="center">Personalized Portfolio</Card.Header>
           <Card.Description>
             <Progress
               value={item.risk}
@@ -47,8 +49,8 @@ class RiskCalculator extends React.Component {
               />
             </Grid.Column>
             <Grid.Column mobile={16} tablet={16} computer={8}>
-              <Segment attached placeholder style={{ height: "90%" }}>
-                <RiskResults {...this.props} />
+              <Segment attached placeholder style={{ height: "70%" }}>
+                <RiskResults {...this.props} keys={keys} />
               </Segment>
 
               {someError && (

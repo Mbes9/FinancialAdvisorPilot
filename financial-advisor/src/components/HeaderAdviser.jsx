@@ -12,7 +12,7 @@ const HeaderAdviser = ({ handleBack }) => (
     />
     <Header as="h2" icon textAlign="center">
       <Icon name="info" circular />
-      <Header.Content>Financial Advisor</Header.Content>
+      <Header.Content >Financial Advisor</Header.Content>
     </Header>
   </div>
 );

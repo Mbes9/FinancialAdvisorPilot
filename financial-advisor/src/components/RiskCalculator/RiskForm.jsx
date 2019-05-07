@@ -10,7 +10,7 @@ const RiskForm = ({
   handleCalculate,
   formErrors
 }) => (
-  <Table basic="very" celled collapsing>
+  <Table basic="very" celled >
     <Table.Header>
       <Table.Row>
         <Table.HeaderCell />

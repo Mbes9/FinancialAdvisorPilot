@@ -1,25 +1,27 @@
 import React from "react";
-import { List, Header, Icon } from "semantic-ui-react";
+import { List, Header, Icon, Container } from "semantic-ui-react";
 
-const RiskResults = ({ results = [] }) => (
-  <React.Fragment>
-    {!results.length && (
-      <Header icon>
+const RiskResults = ({ transfers = [], keys }) => (
+  <Container>
+    {!transfers.length && (
+      <Header icon textAlign="center">
         <Icon name="info" />
         No rebalancing has been done
       </Header>
     )}
     <List divided relaxed>
-      {results.map((result, index) => (
+      {transfers.map((result, index) => (
         <List.Item key={index}>
-          <List.Icon name="marker" />
+          <List.Icon name="marker" verticalAlign="middle" />
           <List.Content>
-            <List.Header>{result}</List.Header>
+            <List.Header>{`Transfer $${result.amount} from ${
+              keys[result.from]
+            } to ${keys[result.to]}`}</List.Header>
           </List.Content>
         </List.Item>
       ))}
     </List>
-  </React.Fragment>
+  </Container>
 );
 
 export default RiskResults;
