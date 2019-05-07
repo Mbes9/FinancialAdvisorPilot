@@ -7,6 +7,6 @@
 ###### Make sure you have NPM before getting started.
 
 - git clone https://github.com/Mbes9/FinancialAdvisorPilot.git
-- cd FinancialAdvisorPilot
+- cd FinancialAdvisorPilot/financial-advisor
 - npm i
 - npm start
